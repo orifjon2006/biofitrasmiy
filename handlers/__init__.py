@@ -1,14 +1,11 @@
-from aiogram import Router
-from . import auth, super_admin, sub_admin, client_panel
-
 def get_main_router() -> Router:
     main_router = Router()
     
-    # Routerlarni tartib bilan ulash
-    # Eslatma: auth birinchi turishi tavsiya etiladi
-    main_router.include_router(auth.router)
-    main_router.include_router(super_admin.router)
-    main_router.include_router(sub_admin.router)
-    main_router.include_router(client_panel.router)
+    # Tartib mana shunday bo'lsin:
+    main_router.include_router(auth.router)         # 1. Avval login/parol tekshiruvi
+    main_router.include_router(super_admin.router)  # 2. Katta admin filtri bilan
+    main_router.include_router(sub_admin.router)    # 3. Kichik admin xabarlari
+    main_router.include_router(client_panel.router) # 4. Mijozlar paneli
+    main_router.include_router(daily_report.router) # 5. Kunlik hisobotlar
     
     return main_router
