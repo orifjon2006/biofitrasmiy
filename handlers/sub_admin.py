@@ -18,7 +18,19 @@ async def cancel_handler(message: Message, state: FSMContext):
         "Amal bekor qilindi. Bosh menyudasiz.",
         reply_markup=sub_admin_main_kb()
     )
+from database import async_session, Admin
+from sqlalchemy.future import select
 
+# Xabarni yuborgan odam bazada admin ekanligini tekshirish
+async def is_sub_admin(message: Message):
+    async with async_session() as session:
+        result = await session.execute(
+            select(Admin).where(Admin.telegram_id == message.from_user.id)
+        )
+        return result.scalars().first() is not None
+
+# Barcha xabarlarga ushbu filtrni ulash
+router.message.filter(is_sub_admin)
 # ================= MIJOZ QO'SHISH JARAYONI (START) =================
 
 @router.message(F.text == "👤 Mijoz qo'shish")
@@ -117,4 +129,5 @@ async def process_deactivation(message: Message):
     if success:
         await message.answer(f"Mijoz (ID: {client_id}) botdan muvaffaqiyatli chetlatildi.")
     else:
+
         await message.answer("Bunday ID dagi mijoz topilmadi.")
